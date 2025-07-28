@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zeebra Cakes PKT - Sweetness Redefined</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&family=Montserrat:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+      :root {
+        --primary-yellow: #ffd700;
+        --dark-yellow: #ffc000;
+        --black: #000000;
+        --white: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        overflow-x: hidden;
+        background-color: var(--white);
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+      }
+
+      /* Zebra Stripe Animation */
+      @keyframes zebra-move {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 100px 100px;
+        }
+      }
+
+      .zebra-bg {
+        background: repeating-linear-gradient(
+          45deg,
+          var(--primary-yellow),
+          var(--primary-yellow) 20px,
+          var(--black) 20px,
+          var(--black) 40px
+        );
+        animation: zebra-move 3s linear infinite;
+      }
+
+      /* Header & Navigation */
+      header {
+        background-color: var(--primary-yellow);
+        padding: 15px 0;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .logo {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        font-size: 1.8rem;
+        color: var(--black);
+        text-decoration: none;
+      }
+
+      .logo span {
+        color: var(--black);
+        text-shadow: 2px 2px 0 var(--white);
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      nav ul li {
+        margin-left: 30px;
+      }
+
+      nav ul li a {
+        color: var(--black);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      nav ul li a:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: var(--black);
+        bottom: -5px;
+        left: 0;
+        transition: width 0.3s ease;
+      }
+
+      nav ul li a:hover:after {
+        width: 100%;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--black);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: var(--primary-yellow);
+        position: relative;
+        overflow: hidden;
+        padding-top: 80px;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        padding: 0 20px;
+        z-index: 2;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: var(--black);
+        text-shadow: 3px 3px 0 var(--white);
+        line-height: 1.2;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        color: var(--black);
+      }
+
+      .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .btn {
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background-color: var(--black);
+        color: var(--primary-yellow);
+        border: 2px solid var(--black);
+      }
+
+      .btn-primary:hover {
+        background-color: transparent;
+        color: var(--black);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: var(--black);
+        border: 2px solid var(--black);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--black);
+        color: var(--primary-yellow);
+      }
+
+      .tagline-rotator {
+        height: 60px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .tagline {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--black);
+        animation: rotateTagline 9s infinite;
+      }
+
+      @keyframes rotateTagline {
+        0%,
+        33% {
+          transform: translateY(0);
+        }
+        33.33%,
+        66% {
+          transform: translateY(-100%);
+        }
+        66.66%,
+        100% {
+          transform: translateY(-200%);
+        }
+      }
+
+      /* About Section */
+      .about {
+        padding: 100px 20px;
+        background-color: var(--white);
+        text-align: center;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 50px;
+        color: var(--black);
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title:after {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: 4px;
+        background: var(--primary-yellow);
+        bottom: -10px;
+        left: 25%;
+      }
+
+      .about-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .about p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .delivery-badge {
+        display: inline-block;
+        background-color: var(--primary-yellow);
+        color: var(--black);
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        margin-top: 20px;
+        border: 2px dashed var(--black);
+      }
+
+      /* Menu Section */
+      .menu {
+        padding: 100px 20px;
+        background-color: #f9f9f9;
+      }
+
+      .menu-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .menu-filter {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        gap: 10px;
+      }
+
+      .filter-btn {
+        padding: 10px 25px;
+        background-color: var(--white);
+        border: 2px solid var(--primary-yellow);
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn.active {
+        background-color: var(--primary-yellow);
+        color: var(--black);
+      }
+
+      .filter-btn:hover {
+        background-color: var(--primary-yellow);
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .menu-item {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .menu-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .menu-item-img {
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .menu-item-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .menu-item:hover .menu-item-img img {
+        transform: scale(1.1);
+      }
+
+      .menu-item-content {
+        padding: 20px;
+      }
+
+      .menu-item-title {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--black);
+      }
+
+      .menu-item-price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-yellow);
+        margin-bottom: 15px;
+      }
+
+      .menu-item-desc {
+        color: #666;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+
+      .add-to-cart {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-yellow);
+        color: var(--black);
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .add-to-cart:hover {
+        background-color: var(--black);
+        color: var(--primary-yellow);
+      }
+
+      /* Special Offers */
+      .offers {
+        padding: 80px 20px;
+        background-color: var(--primary-yellow);
+        text-align: center;
+      }
+
+      .offer-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: var(--white);
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .offer-card:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 10px;
+        background: repeating-linear-gradient(
+          45deg,
+          var(--primary-yellow),
+          var(--primary-yellow) 10px,
+          var(--black) 10px,
+          var(--black) 20px
+        );
+      }
+
+      .offer-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: var(--black);
+      }
+
+      .offer-desc {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .offer-code {
+        display: inline-block;
+        background-color: var(--black);
+        color: var(--primary-yellow);
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+
+      .countdown {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--black);
+        margin-top: 20px;
+      }
+
+      /* Testimonials */
+      .testimonials {
+        padding: 100px 20px;
+        background-color: #f9f9f9;
+      }
+
+      .testimonial-slider {
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .testimonial-card {
+        background-color: var(--white);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin: 0 15px;
+        text-align: center;
+      }
+
+      .testimonial-text {
+        font-style: italic;
+        color: #555;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .testimonial-text:before,
+      .testimonial-text:after {
+        content: '"';
+        font-size: 2rem;
+        color: var(--primary-yellow);
+        opacity: 0.5;
+      }
+
+      .testimonial-text:before {
+        position: absolute;
+        top: -15px;
+        left: -10px;
+      }
+
+      .testimonial-text:after {
+        position: absolute;
+        bottom: -30px;
+        right: -10px;
+      }
+
+      .testimonial-author {
+        font-weight: 700;
+        color: var(--black);
+      }
+
+      .testimonial-role {
+        color: #777;
+        font-size: 0.9rem;
+      }
+
+      /* Contact Section */
+      .contact {
+        padding: 100px 20px;
+        background-color: var(--white);
+      }
+
+      .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 50px;
+      }
+
+      .contact-info {
+        margin-bottom: 30px;
+      }
+
+      .contact-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: var(--black);
+      }
+
+      .contact-detail {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .contact-icon {
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary-yellow);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: var(--black);
+      }
+
+      .contact-text {
+        color: #333;
+      }
+
+      .contact-form {
+        background-color: #f9f9f9;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      textarea.form-input {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .submit-btn {
+        background-color: var(--primary-yellow);
+        color: var(--black);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        background-color: var(--black);
+        color: var(--primary-yellow);
+      }
+
+      .map-container {
+        height: 300px;
+        margin-top: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      /* WhatsApp Float Button */
+      .whatsapp-float {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: #25d366;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: all 0.3s ease;
+      }
+
+      .whatsapp-float:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--black);
+        color: var(--white);
+        padding: 50px 20px 20px;
+        text-align: center;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-column h3 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        color: var(--primary-yellow);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary-yellow);
+        padding-left: 5px;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-link {
+        width: 40px;
+        height: 40px;
+        background-color: #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        transition: all 0.3s ease;
+      }
+
+      .social-link:hover {
+        background-color: var(--primary-yellow);
+        color: var(--black);
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #333;
+        padding-top: 20px;
+        color: #999;
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .nav-container {
+          flex-direction: column;
+        }
+
+        nav ul {
+          margin-top: 20px;
+          flex-direction: column;
+          align-items: center;
+          display: none;
+        }
+
+        nav ul.show {
+          display: flex;
+        }
+
+        nav ul li {
+          margin: 10px 0;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+          position: absolute;
+          top: 20px;
+          right: 20px;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .btn {
+          width: 100%;
+          text-align: center;
+        }
+
+        .menu-filter {
+          flex-direction: column;
+        }
+
+        .filter-btn {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="nav-container">
+        <a href="#" class="logo">ZEEBRA <span>CAKES PKT</span></a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+          <ul id="navMenu">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <div class="tagline-rotator">
+          <div class="tagline">Sweetness Redefined</div>
+          <div class="tagline">1-Hour Cake Delivery!</div>
+          <div class="tagline">Burgers + Cakes = Happiness</div>
+        </div>
+        <h1>CRAAAVING CAKES OR BURGERS? WE'VE GOT BOTH!</h1>
+        <p>
+          Custom cakes ready in just 1 hour! Fast food that satisfies your
+          cravings.
+        </p>
+        <div class="cta-buttons">
+          <a href="#menu" class="btn btn-primary">Order Now</a>
+          <a href="tel:9363001055" class="btn btn-secondary"
+            >Call: 9363001055</a
+          >
+        </div>
+      </div>
+      <div
+        class="zebra-bg"
+        style="
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0.1;
+          z-index: 1;
+        "
+      ></div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+      <h2 class="section-title">About Us</h2>
+      <div class="about-content">
+        <p>
+          Welcome to Zeebra Cakes PKT, where we redefine sweetness with our
+          delicious cakes and fast food in Pattukkottai. Our unique zebra-themed
+          bakery brings you the best of both worlds - mouthwatering desserts and
+          satisfying fast food.
+        </p>
+        <p>
+          Founded with a passion for quality and creativity, we specialize in
+          customized cakes that can be ready within just 1 hour! Whether it's a
+          birthday, wedding, or any special occasion, our fondant cakes will
+          make your event memorable.
+        </p>
+        <div class="delivery-badge">
+          <i class="fas fa-clock"></i> 1-Hour Delivery Available!
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu" id="menu">
+      <div class="menu-container">
+        <h2 class="section-title">Our Menu</h2>
+        <div class="menu-filter">
+          <button class="filter-btn active" data-category="all">
+            All Items
+          </button>
+          <button class="filter-btn" data-category="cakes">Cakes</button>
+          <button class="filter-btn" data-category="fastfood">Fast Food</button>
+        </div>
+        <div class="menu-grid" id="menuGrid">
+          <!-- Menu items will be loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Special Offers -->
+    <section class="offers">
+      <div class="offer-card">
+        <h3 class="offer-title">Limited Time Offer!</h3>
+        <p class="offer-desc">
+          Get 10% off on your first order. Use the code below when checking out.
+        </p>
+        <div class="offer-code">ZEEBRA10</div>
+        <p>
+          Hurry! Offer ends in:
+          <span class="countdown" id="countdown">60:00</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+      <h2 class="section-title">Customer Reviews</h2>
+      <div class="testimonial-slider" id="testimonialSlider">
+        <!-- Testimonials will be loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+      <h2 class="section-title">Contact Us</h2>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>Get in Touch</h3>
+          <div class="contact-detail">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="contact-text">
+              Nadimuthu Nagar, Pattukkottai, Tamil Nadu 622602
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="contact-text">+91 9363001055</div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-text">zeebracakespkt@gmail.com</div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="contact-text">Open Daily: 9:00 AM - 9:30 PM</div>
+          </div>
+          <div class="map-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.715428061496!2d78.12345678901234!3d10.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDA3JzI0LjQiTiA3OMKwMDcnMjQuNCJF!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h3>Send us a Message</h3>
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name" class="form-label">Your Name</label>
+              <input type="text" id="name" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Your Email</label>
+              <input type="email" id="email" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Your Phone</label>
+              <input type="tel" id="phone" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="message" class="form-label">Your Message</label>
+              <textarea id="message" class="form-input" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- WhatsApp Float Button -->
+    <a
+      href="https://wa.me/919363001055?text=Hi%20Zeebra%20Cakes!%20I%20want%20to%20order..."
+      class="whatsapp-float"
+    >
+      <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Zeebra Cakes PKT</h3>
+          <p>
+            Sweetness Redefined in Pattukkottai. Custom cakes and delicious fast
+            food to satisfy all your cravings.
+          </p>
+          <div class="social-links">
+            <a
+              href="https://www.instagram.com/zeebra_cakes_pkt/"
+              class="social-link"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/" class="social-link">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.com/" class="social-link">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Opening Hours</h3>
+          <ul class="footer-links">
+            <li>Monday - Sunday</li>
+            <li>9:00 AM - 9:30 PM</li>
+          </ul>
+          <h3 style="margin-top: 20px">Contact</h3>
+          <ul class="footer-links">
+            <li>+91 9363001055</li>
+            <li>zeebracakespkt@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2023 Zeebra Cakes PKT. All Rights Reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Firebase Configuration -->
+    <script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+    </script>
+
+    <!-- JavaScript -->
+    <script>
+      // Mobile Menu Toggle
+      document
+        .getElementById("mobileMenuBtn")
+        .addEventListener("click", function () {
+          document.getElementById("navMenu").classList.toggle("show");
+        });
+
+      // Smooth Scrolling for Navigation
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
+
+      // Countdown Timer
+      let timeLeft = 3600; // 1 hour in seconds
+      const countdownElement = document.getElementById("countdown");
+
+      const countdownTimer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        countdownElement.textContent = `${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdownTimer);
+          countdownElement.textContent = "Offer Expired!";
+        } else {
+          timeLeft--;
+        }
+      }, 1000);
+
+      // Menu Items Data
+      const menuItems = [
+        {
+          id: 1,
+          name: "Zebra Stripe Cake",
+          category: "cakes",
+          price: 599,
+          description:
+            "Our signature black and white zebra stripe cake with rich vanilla flavor.",
+          image:
+            "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 2,
+          name: "Chocolate Fondant Cake",
+          category: "cakes",
+          price: 699,
+          description:
+            "Decadent chocolate cake with smooth fondant icing and edible decorations.",
+          image:
+            "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 3,
+          name: "Birthday Special Cake",
+          category: "cakes",
+          price: 899,
+          description:
+            "Customized birthday cake with name and theme of your choice.",
+          image:
+            "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 4,
+          name: "Wedding Cake",
+          category: "cakes",
+          price: 2499,
+          description:
+            "Elegant multi-tier wedding cake with premium fondant and floral decorations.",
+          image:
+            "https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 5,
+          name: "Cheese Burger",
+          category: "fastfood",
+          price: 129,
+          description:
+            "Juicy beef patty with melted cheese, fresh veggies and special sauce.",
+          image:
+            "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 6,
+          name: "Pepperoni Pizza",
+          category: "fastfood",
+          price: 199,
+          description:
+            "Classic pizza with tomato sauce, mozzarella cheese and pepperoni toppings.",
+          image:
+            "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 7,
+          name: "Chicken Wings",
+          category: "fastfood",
+          price: 179,
+          description:
+            "Crispy fried chicken wings with your choice of sauce - BBQ, Hot or Honey Mustard.",
+          image:
+            "https://images.unsplash.com/photo-1567620832903-9fc6e53a2ff0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          id: 8,
+          name: "French Fries",
+          category: "fastfood",
+          price: 79,
+          description:
+            "Golden crispy french fries served with ketchup and mayonnaise.",
+          image:
+            "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        },
+      ];
+
+      // Testimonials Data
+      const testimonials = [
+        {
+          name: "Ramesh Kumar",
+          role: "Regular Customer",
+          text: "The zebra stripe cake was the highlight of my daughter's birthday party! Ordered it in the morning and got it delivered within an hour. Amazing service!",
+        },
+        {
+          name: "Priya S",
+          role: "Wedding Customer",
+          text: "Our wedding cake from Zeebra Cakes was absolutely stunning. The design was exactly what we wanted and it tasted delicious too. Highly recommend!",
+        },
+        {
+          name: "Arun V",
+          role: "Food Lover",
+          text: "I can't decide what I love more - their cakes or their burgers! The perfect place when you can't decide between sweet and savory.",
+        },
+      ];
+
+      // Load Menu Items
+      function loadMenuItems(category = "all") {
+        const menuGrid = document.getElementById("menuGrid");
+        menuGrid.innerHTML = "";
+
+        const filteredItems =
+          category === "all"
+            ? menuItems
+            : menuItems.filter((item) => item.category === category);
+
+        filteredItems.forEach((item) => {
+          const menuItem = document.createElement("div");
+          menuItem.className = "menu-item";
+          menuItem.innerHTML = `
+                    <div class="menu-item-img">
+                        <img src="${item.image}" alt="${item.name}">
+                    </div>
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">${item.name}</h3>
+                        <div class="menu-item-price">₹${item.price}</div>
+                        <p class="menu-item-desc">${item.description}</p>
+                        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+                    </div>
+                `;
+          menuGrid.appendChild(menuItem);
+        });
+
+        // Add event listeners to Add to Cart buttons
+        document.querySelectorAll(".add-to-cart").forEach((button) => {
+          button.addEventListener("click", function () {
+            const itemId = parseInt(this.getAttribute("data-id"));
+            const item = menuItems.find((i) => i.id === itemId);
+            addToCart(item);
+          });
+        });
+      }
+
+      // Load Testimonials
+      function loadTestimonials() {
+        const testimonialSlider = document.getElementById("testimonialSlider");
+        testimonialSlider.innerHTML = "";
+
+        testimonials.forEach((testimonial) => {
+          const testimonialCard = document.createElement("div");
+          testimonialCard.className = "testimonial-card";
+          testimonialCard.innerHTML = `
+                    <p class="testimonial-text">${testimonial.text}</p>
+                    <div class="testimonial-author">${testimonial.name}</div>
+                    <div class="testimonial-role">${testimonial.role}</div>
+                `;
+          testimonialSlider.appendChild(testimonialCard);
+        });
+      }
+
+      // Add to Cart Function
+      function addToCart(item) {
+        // In a real implementation, this would save to Firebase
+        alert(`Added ${item.name} to cart!`);
+
+        // For demo purposes, we'll just log to console
+        console.log("Added to cart:", item);
+
+        // In a real app, you would:
+        // database.ref('carts/' + userId).push(item);
+      }
+
+      // Contact Form Submission
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const phone = document.getElementById("phone").value;
+          const message = document.getElementById("message").value;
+
+          // In a real implementation, this would save to Firebase
+          const contactData = {
+            name,
+            email,
+            phone,
+            message,
+            timestamp: new Date().toISOString(),
+          };
+
+          // For demo purposes, we'll just log to console
+          console.log("Contact form submitted:", contactData);
+          alert("Thank you for your message! We will contact you soon.");
+
+          // In a real app, you would:
+          // database.ref('contacts').push(contactData);
+
+          // Reset form
+          this.reset();
+        });
+
+      // Menu Filter Buttons
+      document.querySelectorAll(".filter-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          this.classList.add("active");
+
+          const category = this.getAttribute("data-category");
+          loadMenuItems(category);
+        });
+      });
+
+      // Initialize the page
+      window.addEventListener("DOMContentLoaded", function () {
+        loadMenuItems();
+        loadTestimonials();
+      });
+    </script>
+  </body>
+</html>
